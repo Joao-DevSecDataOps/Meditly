@@ -1,0 +1,11 @@
+Flask>=2.0
+pandas
+matplotlib
+wordcloud
+scikit-learn
+joblib
+Flask-Login
+Werkzeug
+python-dotenv
+Flask-WTF
+cryptography

@@ -1,0 +1,50 @@
+{% extends 'layout.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block header %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Últimos Registros de Pensamento (RDP)</h2>
+        <div class="space-y-4">
+            {% if rdps %}
+                {% for rdp in rdps %}
+                <a href="{{ url_for('detalhe_rdp', rdp_id=rdp.id) }}" class="block hover:bg-gray-50 transition">
+                    <div class="bg-white p-4 rounded-lg shadow-md border border-transparent hover:border-teal-500">
+                        <p class="text-sm text-gray-500">{{ rdp.data_registro.split(' ')[0] }}</p>
+                        <h3 class="font-bold text-teal-700">Situação:</h3>
+                        <p class="mb-2 truncate">{{ rdp.situacao }}</p>
+                        <h3 class="font-semibold text-gray-600">Pensamento Automático:</h3>
+                        <p class="italic truncate">"{{ rdp.pensamentos_automaticos }}"</p>
+                    </div>
+                </a>
+                {% endfor %}
+            {% else %}
+                <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                    <p class="text-gray-600">Nenhum registro encontrado. <a href="{{ url_for('novo_rdp') }}" class="text-teal-600 hover:underline font-semibold">Crie o seu primeiro!</a></p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <div>
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Minhas Crenças</h2>
+        <div class="bg-white p-4 rounded-lg shadow-md">
+            <ul class="space-y-3">
+            {% if crencas %}
+                {% for crenca in crencas %}
+                <li class="border-b pb-2">
+                    <span class="font-bold text-sm {{ 'text-red-700' if crenca.tipo == 'Central' else 'text-orange-600' }}">{{ crenca.tipo }}</span>
+                    <p class="text-gray-700">{{ crenca.descricao }}</p>
+                    <div class="text-xs text-gray-500">
+                        <span>Tríade: {{ crenca.categoria_triade }}</span> | <span>Convicção: {{ crenca.nivel_conviccao }}%</span>
+                    </div>
+                </li>
+                {% endfor %}
+            {% else %}
+                 <p class="text-gray-600">Nenhuma crença registrada. <a href="{{ url_for('gerenciar_crencas') }}" class="text-teal-600 hover:underline">Adicione uma.</a></p>
+            {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

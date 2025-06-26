@@ -1,0 +1,53 @@
+{% extends 'layout.html' %}
+{% block title %}Gerenciar Crenças{% endblock %}
+{% block header %}Crenças e Pressupostos{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-1">
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Adicionar Nova Crença</h2>
+            <form action="{{ url_for('gerenciar_crencas') }}" method="POST" class="space-y-4">
+                {{ form.hidden_tag() }}
+                <div>
+                    {{ form.descricao.label(class="block text-sm font-medium text-gray-700") }}
+                    {{ form.descricao() }}
+                </div>
+                <div>
+                    {{ form.tipo.label(class="block text-sm font-medium text-gray-700") }}
+                    {{ form.tipo() }}
+                </div>
+                <div>
+                    {{ form.categoria_triade.label(class="block text-sm font-medium text-gray-700") }}
+                    {{ form.categoria_triade() }}
+                </div>
+                <div>
+                    {{ form.nivel_conviccao.label(class="block text-sm font-medium text-gray-700") }}
+                    {{ form.nivel_conviccao() }}
+                </div>
+                <div class="flex justify-end">
+                    {{ form.submit() }}
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="lg:col-span-2">
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Crenças Registradas</h2>
+            <ul class="space-y-3">
+                {% for crenca in crencas %}
+                <li class="border-b pb-2">
+                    <span class="font-bold text-sm {{ 'text-red-700' if crenca.tipo == 'Central' else 'text-orange-600' }}">{{ crenca.tipo }}</span>
+                    <p class="text-gray-700 text-lg">"{{ crenca.descricao }}"</p>
+                    <div class="text-sm text-gray-500 mt-1">
+                        <span>Tríade: {{ crenca.categoria_triade }}</span> | <span>Convicção: {{ crenca.nivel_conviccao }}%</span>
+                    </div>
+                </li>
+                {% else %}
+                <p>Nenhuma crença registrada ainda.</p>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

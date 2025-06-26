@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="h-full bg-gray-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Diário TCC{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="h-full">
+<div class="min-h-full">
+  <nav class="bg-teal-600">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="flex h-16 items-center justify-between">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <h1 class="text-2xl font-bold text-white">Meu Diário TCC</h1>
+          </div>
+          <div class="hidden md:block">
+            {% if current_user.is_authenticated %}
+            <div class="ml-10 flex items-baseline space-x-4">
+              <a href="{{ url_for('index') }}" class="text-white hover:bg-teal-700 rounded-md px-3 py-2 text-sm font-medium">Dashboard</a>
+              <a href="{{ url_for('novo_rdp') }}" class="text-white hover:bg-teal-700 rounded-md px-3 py-2 text-sm font-medium">Novo RDP</a>
+              <a href="{{ url_for('gerenciar_crencas') }}" class="text-white hover:bg-teal-700 rounded-md px-3 py-2 text-sm font-medium">Crenças</a>
+              <a href="{{ url_for('pagina_analise') }}" class="text-white hover:bg-teal-700 rounded-md px-3 py-2 text-sm font-medium">Análise</a>
+              <a href="{{ url_for('diario_gratidao') }}" class="text-white hover:bg-teal-700 rounded-md px-3 py-2 text-sm font-medium">Diário de Gratidão</a>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        {% if current_user.is_authenticated %}
+        <div class="hidden md:block">
+            <div class="ml-4 flex items-center md:ml-6">
+                <span class="text-teal-200 px-3 py-2 text-sm">Olá, {{ current_user.username }}</span>
+                <a href="{{ url_for('logout') }}" class="text-white hover:bg-teal-700 rounded-md px-3 py-2 text-sm font-medium">Logout</a>
+            </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+  {% if self.header()|trim %}
+  <header class="bg-white shadow">
+    <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <h1 class="text-3xl font-bold tracking-tight text-gray-900">{% block header %}{% endblock %}</h1>
+    </div>
+  </header>
+  {% endif %}
+  <main>
+    <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="mb-4 rounded-md {{ 'bg-green-100 border-green-400 text-green-700' if category == 'success' else 'bg-red-100 border-red-400 text-red-700' }} border p-4" role="alert">
+              <p class="font-bold">{{ 'Sucesso!' if category == 'success' else 'Atenção!' }}</p>
+              <p>{{ message }}</p>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+</div>
+</body>
+</html>

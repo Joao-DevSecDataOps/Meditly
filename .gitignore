@@ -1,0 +1,43 @@
+# Ambientes virtuais
+venv/
+.venv/
+
+# Caches e arquivos compilados do Python
+__pycache__/
+*.pyc
+
+# Arquivos de banco de dados
+*.db# Ambientes virtuais
+venv/
+.venv/
+
+# Caches e arquivos compilados do Python
+__pycache__/
+*.pyc
+
+# Arquivos de banco de dados
+*.db
+*.sqlite3
+
+# Arquivos de IDE e sistema
+.idea/
+.vscode/
+.DS_Store
+
+# Arquivos de modelo de Machine Learning
+*.joblib
+
+# Arquivos de ambiente - NÃO VERSIONAR!
+.env
+*.sqlite3
+
+# Arquivos de IDE e sistema
+.idea/
+.vscode/
+.DS_Store
+
+# Arquivos de modelo de Machine Learning
+*.joblib
+
+# Arquivos de ambiente - NÃO VERSIONAR!
+.env

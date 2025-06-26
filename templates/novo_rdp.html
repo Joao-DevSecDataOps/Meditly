@@ -1,0 +1,129 @@
+{% extends 'layout.html' %}
+{% block title %}Novo RDP{% endblock %}
+{% block header %}Novo Registro de Pensamento Disfuncional{% endblock %}
+
+{% block content %}
+<div class="bg-white p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
+    <form id="rdp-form" action="{{ url_for('novo_rdp') }}" method="POST">
+        {{ form.hidden_tag() }} <div class="space-y-8">
+            <div>
+                {{ form.situacao.label(class="block text-lg font-medium text-gray-700") }}
+                <p class="text-sm text-gray-500 mb-2">O que aconteceu? Onde, quando, com quem?</p>
+                {{ form.situacao() }}
+            </div>
+
+            <div>
+                {{ form.pensamentos_automaticos.label(class="block text-lg font-medium text-gray-700") }}
+                <p class="text-sm text-gray-500 mb-2">O que passou pela sua cabeça?</p>
+                {{ form.pensamentos_automaticos() }}
+            </div>
+
+            <div>
+                {{ form.emocoes.label(class="block text-lg font-medium text-gray-700") }}
+                <p class="text-sm text-gray-500 mb-2">Quais emoções você sentiu e qual a intensidade (0-100%)?</p>
+                {{ form.emocoes() }}
+            </div>
+
+            <div>
+                {{ form.comportamento.label(class="block text-lg font-medium text-gray-700") }}
+                <p class="text-sm text-gray-500 mb-2">O que você fez (ou não fez) como resultado?</p>
+                {{ form.comportamento() }}
+            </div>
+
+            <hr/>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-700">Distorções Cognitivas</h3>
+                            <p class="text-sm text-gray-500">Quais distorções você consegue identificar?</p>
+                        </div>
+                        <button type="button" id="suggest-btn" class="bg-purple-600 text-white text-xs font-bold py-1 px-3 rounded-full hover:bg-purple-700 transition duration-300 shadow">
+                            Sugerir (IA) ✨
+                        </button>
+                    </div>
+                    <div id="distortions-list" class="mt-2 space-y-2 max-h-60 overflow-y-auto border p-3 rounded-md">
+                        {% for subfield in form.distorcoes %}
+                        <label class="flex items-center space-x-3">
+                            {{ subfield(**{'data-name': subfield.label.text, 'class': 'h-4 w-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500'}) }}
+                            {{ subfield.label(class="text-gray-700 font-medium") }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                    <p id="suggestion-feedback" class="text-xs text-purple-700 mt-1 h-4"></p>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-medium text-gray-700">Crença Associada</h3>
+                    <p class="text-sm text-gray-500 mb-2">Este pensamento reforça alguma crença?</p>
+                    {{ form.id_crenca_associada() }}
+                </div>
+            </div>
+
+            <div class="flex justify-end pt-4">
+                {{ form.submit() }}
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const suggestBtn = document.getElementById('suggest-btn');
+    const thoughtTextarea = document.getElementById('pensamentos_automaticos');
+    const feedbackEl = document.getElementById('suggestion-feedback');
+    const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+
+    suggestBtn.addEventListener('click', async function() {
+        const thoughtText = thoughtTextarea.value;
+        if (thoughtText.trim().length < 10) {
+            feedbackEl.textContent = 'Escreva um pensamento mais longo para a IA analisar.';
+            return;
+        }
+
+        feedbackEl.textContent = 'Analisando...';
+        suggestBtn.disabled = true;
+
+        try {
+            const response = await fetch("{{ url_for('prever_distorcoes_api') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({ texto: thoughtText }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Erro na comunicação com o servidor.');
+            }
+
+            const data = await response.json();
+            
+            document.querySelectorAll('#distortions-list input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            if (data.sugestoes && data.sugestoes.length > 0) {
+                data.sugestoes.forEach(suggestionName => {
+                    const checkbox = document.querySelector(`input[data-name="${suggestionName}"]`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                });
+                feedbackEl.textContent = `Sugestões aplicadas!`;
+            } else {
+                feedbackEl.textContent = 'Nenhuma distorção específica foi identificada.';
+            }
+
+        } catch (error) {
+            console.error('Erro ao buscar sugestões:', error);
+            feedbackEl.textContent = 'Não foi possível obter sugestões.';
+        } finally {
+            suggestBtn.disabled = false;
+        }
+    });
+});
+</script>
+{% endblock %}

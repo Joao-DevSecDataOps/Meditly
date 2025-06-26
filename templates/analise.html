@@ -1,0 +1,60 @@
+{% extends 'layout.html' %}
+{% block title %}Análise de Dados{% endblock %}
+{% block header %}Análise & Insights{% endblock %}
+
+{% block content %}
+{% if insights %}
+<div class="bg-white p-6 rounded-lg shadow mb-12">
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">Insights Preditivos Simples</h2>
+    <div class="space-y-4">
+        {% for insight in insights %}
+        <div class="flex items-start p-4 rounded-lg {{ 'bg-red-50 border-red-400' if insight.tipo == 'alerta' else 'bg-blue-50 border-blue-400' }} border-l-4">
+            <div class="ml-3">
+                <h3 class="text-lg font-medium {{ 'text-red-800' if insight.tipo == 'alerta' else 'text-blue-800' }}">
+                    {% if insight.tipo == 'alerta' %}Alerta de Gatilho{% else %}Padrão Cognitivo{% endif %}
+                </h3>
+                <p class="mt-1 text-md {{ 'text-red-700' if insight.tipo == 'alerta' else 'text-blue-700' }}">{{ insight.texto }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<div class="space-y-12">
+    <div class="bg-white p-6 rounded-lg shadow">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">Frequência de Distorções Cognitivas</h2>
+        {% if grafico_distorcoes %}
+            <img src="data:image/png;base64,{{ grafico_distorcoes }}" alt="Gráfico de Distorções Cognitivas" class="w-full h-auto">
+        {% else %}
+            <p class="text-gray-600">Não há dados suficientes para gerar este gráfico.</p>
+        {% endif %}
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">Evolução da Intensidade Emocional</h2>
+        {% if grafico_emocoes %}
+            <img src="data:image/png;base64,{{ grafico_emocoes }}" alt="Gráfico de Evolução das Emoções" class="w-full h-auto">
+        {% else %}
+            <p class="text-gray-600">Não há dados suficientes para gerar este gráfico.</p>
+        {% endif %}
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Nuvem de Palavras dos Pensamentos</h2>
+            {% if nuvem_pensamentos %}
+                <img src="data:image/png;base64,{{ nuvem_pensamentos }}" alt="Nuvem de Palavras dos Pensamentos" class="w-full h-auto">
+            {% else %}
+                <p class="text-gray-600">Nenhum pensamento registrado ainda.</p>
+            {% endif %}
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Nuvem de Palavras das Situações</h2>
+            {% if nuvem_situacoes %}
+                <img src="data:image/png;base64,{{ nuvem_situacoes }}" alt="Nuvem de Palavras das Situações" class="w-full h-auto">
+            {% else %}
+                <p class="text-gray-600">Nenhuma situação registrada ainda.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends 'layout.html' %}
+{% block title %}Detalhe do RDP{% endblock %}
+{% block header %}Análise do Pensamento{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="md:col-span-1 space-y-6">
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="text-xl font-bold text-gray-800 border-b pb-2 mb-4">Registro Original</h3>
+            <p class="text-xs text-gray-500">{{ rdp.data_registro.split(' ')[0] }}</p>
+            <h4 class="font-semibold text-teal-700 mt-3">Situação:</h4>
+            <p>{{ rdp.situacao }}</p>
+            <h4 class="font-semibold text-teal-700 mt-3">Pensamento Automático:</h4>
+            <p class="italic">"{{ rdp.pensamentos_automaticos }}"</p>
+            <h4 class="font-semibold text-teal-700 mt-3">Emoções:</h4>
+            <p>{{ rdp.emocoes }}</p>
+            <h4 class="font-semibold text-teal-700 mt-3">Comportamento:</h4>
+            <p>{{ rdp.comportamento }}</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="text-xl font-bold text-gray-800 border-b pb-2 mb-4">Conexões Cognitivas</h3>
+            <h4 class="font-semibold text-gray-600">Distorções Identificadas:</h4>
+            {% if rdp.distorcoes %}
+            <ul class="list-disc list-inside mt-1">
+                {% for distorcao in rdp.distorcoes %}
+                <li>{{ distorcao }}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="text-sm text-gray-500">Nenhuma distorção identificada.</p>
+            {% endif %}
+            <h4 class="font-semibold text-gray-600 mt-4">Crença Associada:</h4>
+            {% if rdp.crenca_descricao %}
+            <p class="italic text-red-700">"{{ rdp.crenca_descricao }}"</p>
+            {% else %}
+            <p class="text-sm text-gray-500">Nenhuma crença associada.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="md:col-span-2">
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="text-xl font-bold text-gray-800 border-b pb-2 mb-4">Questionamento Socrático</h3>
+            {% if rdp.questionamentos %}
+            <div class="space-y-4 mb-6">
+                <h4 class="font-semibold text-gray-600">Análises Anteriores:</h4>
+                {% for q in rdp.questionamentos %}
+                <div class="border-l-4 border-teal-500 pl-4 py-2 bg-gray-50 rounded">
+                    <p class="font-semibold">{{ q.pergunta }}</p>
+                    <p>{{ q.resposta }}</p>
+                    {% if q.pensamento_alternativo %}
+                    <p class="mt-2 text-sm text-green-700"><span class="font-bold">Alternativa:</span> {{ q.pensamento_alternativo }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <form action="{{ url_for('detalhe_rdp', rdp_id=rdp.id) }}" method="POST" class="space-y-4">
+                {{ form.hidden_tag() }}
+                <div>
+                    {{ form.pergunta.label(class="block text-sm font-medium text-gray-700") }}
+                    {{ form.pergunta() }}
+                </div>
+                <div>
+                    {{ form.resposta.label(class="block text-sm font-medium text-gray-700") }}
+                    {{ form.resposta() }}
+                </div>
+                <div>
+                    {{ form.pensamento_alternativo.label(class="block text-sm font-medium text-gray-700") }}
+                    {{ form.pensamento_alternativo() }}
+                </div>
+                <div>
+                    {{ form.nivel_dissonia_cognitiva.label(class="block text-sm font-medium text-gray-700") }}
+                    {{ form.nivel_dissonia_cognitiva() }}
+                </div>
+                <div class="flex justify-end">
+                    {{ form.submit() }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

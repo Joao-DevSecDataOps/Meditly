@@ -1,0 +1,32 @@
+{% extends 'layout.html' %}
+{% block title %}Diário de Gratidão{% endblock %}
+{% block header %}Diário de Gratidão{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white p-6 rounded-lg shadow mb-8">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Pelo que você é grato(a) hoje?</h2>
+        <form action="{{ url_for('diario_gratidao') }}" method="POST">
+            {{ form.hidden_tag() }}
+            <div>
+                {{ form.entrada() }}
+            </div>
+            <div class="flex justify-end mt-4">
+                {{ form.submit() }}
+            </div>
+        </form>
+    </div>
+
+    <div class="space-y-4">
+        <h2 class="text-xl font-semibold text-gray-800">Entradas Anteriores</h2>
+        {% for entrada in entradas %}
+        <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-yellow-400">
+            <p class="text-sm text-gray-500 mb-2">{{ entrada.data_registro.split(' ')[0] }}</p>
+            <p class="text-gray-700">{{ entrada.entrada }}</p>
+        </div>
+        {% else %}
+        <p>Nenhuma entrada de gratidão registrada ainda.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
